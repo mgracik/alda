@@ -1,0 +1,95 @@
+#!/usr/bin/env python
+
+# Copyright (C) 2012  Red Hat, Inc.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+# Author(s):    Martin Gracik <mgracik@redhat.com>
+#
+
+import argparse
+import logging
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger('alda')
+
+import alda
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('packages', metavar='FILENAME')
+    parser.add_argument('-r', '--repository', metavar='REPOSITORY', action='append', default=[])
+    parser.add_argument('--arch', default=None)
+    parser.add_argument('--greedy', action='store_true', default=False)
+    parser.add_argument('--nosource', action='store_true', default=False)
+    parser.add_argument('--selfhosting', action='store_true', default=False)
+    parser.add_argument('--nodebuginfo', action='store_true', default=False)
+    parser.add_argument('--fulltree', action='store_true', default=False)
+    parser.add_argument('-1', '--oneatatime', action='store_true', default=False)
+    parser.add_argument('-v', '--verbose', action='store_true', default=False)
+    return parser.parse_args()
+
+
+def get_packages(filename, arches):
+    packages = set()
+    excludes = set()
+    with open(filename, 'r') as fileobj:
+        for line in fileobj:
+            line, _sep, _comment = line.partition('#')
+            line = line.strip()
+            if not line:
+                continue
+
+            name, _sep, arch = line.rpartition('.')
+            if arch not in arches:
+                name = line
+                arch = None
+
+            if name.startswith('-'):
+                excludes.add(alda.Package(name=name[1:], arch=arch))
+            else:
+                packages.add(alda.Package(name=name, arch=arch))
+
+    return packages, excludes
+
+
+def main():
+    args = parse_args()
+
+    if args.verbose:
+        log.setLevel(logging.DEBUG)
+
+    repodict = {}
+    for n, repo in enumerate(args.repository, start=1):
+        repodict['alda-repo-%d' % n] = repo
+
+    options = dict(greedy=args.greedy,
+                   source=not args.nosource,
+                   selfhosting=args.selfhosting,
+                   debuginfo=not args.nodebuginfo,
+                   fulltree=args.fulltree,
+                   oneatatime=args.oneatatime)
+
+    alda_ = alda.ALDA(repodict, options)
+    alda_.load_sack(arch=args.arch)
+    packages, excludes = get_packages(filename=args.packages, arches=alda_.arches)
+    alda_.resolve_dependencies(packages, excludes)
+
+    for url in sorted(alda_.urls):
+        print(url)
+
+
+if __name__ == '__main__':
+    main()

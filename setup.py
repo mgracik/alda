@@ -1,7 +1,9 @@
 from distutils.core import setup
 
+version = __import__('alda').__version__
+
 setup(name='alda',
-      version='0.1',
+      version=version,
       description='ALDA',
       author='Martin Gracik',
       author_email='mgracik@redhat.com',

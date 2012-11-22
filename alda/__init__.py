@@ -17,4 +17,6 @@
 # Author(s):    Martin Gracik <mgracik@redhat.com>
 #
 
+__version__ = '0.1'
+
 from alda import ALDA, Package

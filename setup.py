@@ -11,5 +11,5 @@ setup(name='alda',
       download_url='http://',
       license='GPLv2+',
       packages=['alda'],
-      scripts=['alda/bin/alda']
+      scripts=['bin/alda']
       )

@@ -8,7 +8,6 @@ setup(name='alda',
       url='http://',
       download_url='http://',
       license='GPLv2+',
-      package_dir={'': 'src'},
       packages=['alda'],
-      scripts=['src/bin/alda']
+      scripts=['alda/bin/alda']
       )

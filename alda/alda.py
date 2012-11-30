@@ -278,20 +278,18 @@ class ALDA(object):
         if repopath.startswith('/'):
             repopath = 'file://%s' % repopath
 
-        # Get the repo type.
+        # Set the repository URL.
+        repo_handle.setopt(librepo.LRO_URL, repopath)
         if repopath.startswith('http://') or repopath.startswith('ftp://'):
-            repotype = librepo.LRO_URL
             # Set the metadata destination directory.
             destdir = tempfile.mkdtemp(prefix='%s.' % reponame)
             repo_handle.setopt(librepo.LRO_DESTDIR, destdir)
         elif repopath.startswith('file://'):
-            repotype = librepo.LRO_LOCAL
+            repo_handle.setopt(librepo.LRO_LOCAL, True)
             destdir = None
         else:
             raise ValueError("Incorrect repo path '%s'" % repopath)
 
-        # Set the repository URL.
-        repo_handle.setopt(repotype, repopath)
         # Set the repository type.
         repo_handle.setopt(librepo.LRO_REPOTYPE, librepo.LR_YUMREPO)
         # Download primary.xml and filelists.xml - repomd.xml is downloaded automatically.

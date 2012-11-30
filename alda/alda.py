@@ -59,8 +59,10 @@ class PackageSelector(object):
             self._selector = hawkey.Selector(self.sack)
             if self.package.arch:
                 self._selector.set(name=self.package.name, arch=self.package.arch)
+                self._selector.request = '%s.%s' % (self.package.name, self.package.arch)
             else:
                 self._selector.set(name=self.package.name)
+                self._selector.request = self.package.name
         return self._selector
 
 
@@ -79,8 +81,11 @@ class Goal(hawkey.Goal):
         elif isinstance(request, hawkey.Package):
             self._install_requests.add(request)
             super(Goal, self).install(request)
+        elif isinstance(request, hawkey.Selector):
+            self._install_requests.add(request.request)
+            super(Goal, self).install(select=request)
         else:
-            raise TypeError('Expected a Query or Package object')
+            raise TypeError('Expected a Query, Package or Selector object')
 
     @property
     def install_requests(self):
@@ -346,7 +351,7 @@ class ALDA(object):
                 continue
 
             goal = Goal(self.sack)
-            goal.install(ps.query)
+            goal.install(ps.selector)
             self._installs = Accumulator.update(self._installs, goal)
             if goal.problems:
                 self.log.error('encountered errors when getting dependencies for %s', str(package))

@@ -1,0 +1,44 @@
+[["dummy-basesystem",
+  {"Version": "10.0",
+   "Release": "6",
+   "BuildArch": "noarch",
+   "Summary": "A dummy basesystem package",
+   "Group": "System Environment/Base",
+   "Requires": ["dummy-filesystem", "dummy-setup"]
+  }],
+
+ ["dummy-filesystem",
+  {"Version": "3",
+   "Release": "2",
+   "Summary": "A dummy filesystem package",
+   "Group": "System Environment/Base",
+   "Requires": ["dummy-setup"]
+  }],
+
+ ["dummy-setup",
+  {"Version": "2.8.48",
+   "BuildArch": "noarch",
+   "Summary": "A dummy setup package",
+   "Group": "System Environment/Base",
+   "BuildRequires": ["dummy-bash"],
+   "Conflicts": ["dummy-bash <= 2.0.4-21", "dummy-initscripts < 4.26"],
+   "__body__": {"files": ["%config(noreplace) /etc/passwd"],
+                "install": ["mkdir -p %{buildroot}/etc", "touch %{buildroot}/etc/passwd"]}
+  }],
+
+ ["dummy-bash",
+  {"Version": "4.2.24",
+   "Release": "2",
+   "Summary": "A dummy bash package",
+   "Group": "System Environment/Shells",
+   "Provides": ["/bin/bash", "/bin/sh"],
+   "Conflicts": ["dummy-filesystem < 3"],
+   "__subpkg__": [["doc", {"Summary": "A dummy bash-doc package",
+                           "Group": "Development/Languages",
+                           "Requires": ["%{name} = %{version}-%{release}"]}]],
+   "__body__": {"files": ["/bin/bash", "/bin/sh", "%config(noreplace) /etc/skel/.b*"],
+                "install": ["mkdir -p %{buildroot}/bin", "mkdir -p %{buildroot}/etc/skel",
+                            "touch %{buildroot}/bin/bash", "touch %{buildroot}/bin/sh",
+                            "touch %{buildroot}/etc/skel/.bashrc"]}
+  }]
+]

@@ -68,5 +68,51 @@ class TestDefault(ALDATestCase):
                          sorted(self.alda.installs_as_strings))
 
 
+class TestNoSource(ALDATestCase):
+
+    def setUp(self):
+        self.alda = self.get_alda(options=dict(source=False), arch='x86_64')
+
+    def test_basesystem(self):
+        self.alda.resolve_dependencies(BASESYSTEM)
+        self.assertEqual(['dummy-basesystem-10.0-6.noarch',
+                          'dummy-filesystem-3-2.x86_64',
+                          'dummy-setup-2.8.48-1.noarch'],
+                         sorted(self.alda.installs_as_strings))
+
+    def test_bash(self):
+        self.alda.resolve_dependencies(BASH)
+        self.assertEqual(['dummy-bash-4.2.24-2.x86_64'],
+                         sorted(self.alda.installs_as_strings))
+
+
+class TestSelfHosting(ALDATestCase):
+
+    def setUp(self):
+        self.alda = self.get_alda(options=dict(selfhosting=True), arch='x86_64')
+
+    def test_basesystem(self):
+        self.alda.resolve_dependencies(BASESYSTEM)
+        self.assertEqual(['dummy-basesystem-10.0-6.noarch', 'dummy-basesystem-10.0-6.src',
+                          'dummy-bash-4.2.24-2.src', 'dummy-bash-4.2.24-2.x86_64',
+                          'dummy-filesystem-3-2.src', 'dummy-filesystem-3-2.x86_64',
+                          'dummy-setup-2.8.48-1.noarch', 'dummy-setup-2.8.48-1.src'],
+                         sorted(self.alda.installs_as_strings))
+
+
+class TestNoSourceSelfHosting(ALDATestCase):
+
+    def setUp(self):
+        self.alda = self.get_alda(options=dict(source=False, selfhosting=True), arch='x86_64')
+
+    def test_basesystem(self):
+        self.alda.resolve_dependencies(BASESYSTEM)
+        self.assertEqual(['dummy-basesystem-10.0-6.noarch',
+                          'dummy-bash-4.2.24-2.x86_64',
+                          'dummy-filesystem-3-2.x86_64',
+                          'dummy-setup-2.8.48-1.noarch'],
+                         sorted(self.alda.installs_as_strings))
+
+
 if __name__ == '__main__':
     unittest.main()

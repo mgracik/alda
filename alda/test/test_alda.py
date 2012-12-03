@@ -64,7 +64,8 @@ class TestDefault(ALDATestCase):
 
     def test_bash(self):
         self.alda.resolve_dependencies(BASH)
-        self.assertEqual(['dummy-bash-4.2.24-2.src', 'dummy-bash-4.2.24-2.x86_64'],
+        self.assertEqual(['dummy-bash-4.2.24-2.src', 'dummy-bash-4.2.24-2.x86_64',
+                          'dummy-bash-debuginfo-4.2.24-2.x86_64'],
                          sorted(self.alda.installs_as_strings))
 
 
@@ -82,7 +83,8 @@ class TestNoSource(ALDATestCase):
 
     def test_bash(self):
         self.alda.resolve_dependencies(BASH)
-        self.assertEqual(['dummy-bash-4.2.24-2.x86_64'],
+        self.assertEqual(['dummy-bash-4.2.24-2.x86_64',
+                          'dummy-bash-debuginfo-4.2.24-2.x86_64'],
                          sorted(self.alda.installs_as_strings))
 
 
@@ -95,6 +97,7 @@ class TestSelfHosting(ALDATestCase):
         self.alda.resolve_dependencies(BASESYSTEM)
         self.assertEqual(['dummy-basesystem-10.0-6.noarch', 'dummy-basesystem-10.0-6.src',
                           'dummy-bash-4.2.24-2.src', 'dummy-bash-4.2.24-2.x86_64',
+                          'dummy-bash-debuginfo-4.2.24-2.x86_64',
                           'dummy-filesystem-3-2.src', 'dummy-filesystem-3-2.x86_64',
                           'dummy-setup-2.8.48-1.noarch', 'dummy-setup-2.8.48-1.src'],
                          sorted(self.alda.installs_as_strings))
@@ -109,6 +112,7 @@ class TestNoSourceSelfHosting(ALDATestCase):
         self.alda.resolve_dependencies(BASESYSTEM)
         self.assertEqual(['dummy-basesystem-10.0-6.noarch',
                           'dummy-bash-4.2.24-2.x86_64',
+                          'dummy-bash-debuginfo-4.2.24-2.x86_64',
                           'dummy-filesystem-3-2.x86_64',
                           'dummy-setup-2.8.48-1.noarch'],
                          sorted(self.alda.installs_as_strings))

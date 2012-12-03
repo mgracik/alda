@@ -118,5 +118,16 @@ class TestNoSourceSelfHosting(ALDATestCase):
                          sorted(self.alda.installs_as_strings))
 
 
+class TestNoDebuginfo(ALDATestCase):
+
+    def setUp(self):
+        self.alda = self.get_alda(options=dict(debuginfo=False), arch='x86_64')
+
+    def test_bash(self):
+        self.alda.resolve_dependencies(BASH)
+        self.assertEqual(['dummy-bash-4.2.24-2.src', 'dummy-bash-4.2.24-2.x86_64'],
+                         sorted(self.alda.installs_as_strings))
+
+
 if __name__ == '__main__':
     unittest.main()

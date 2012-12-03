@@ -181,6 +181,10 @@ class Accumulator(object):
                     self.log.warning("%s: package '%s' in exclude list", self.last_request, hpo)
                     return
 
+        # Remove the source packages if we don't want them.
+        if not self.options.get('source'):
+            new_packages = set(hpo for hpo in new_packages if hpo.arch != 'src')
+
         # Add the new packages to the set.
         self.data |= new_packages
 

@@ -141,7 +141,10 @@ class Accumulator(object):
         return result
 
     def _get_debuginfo(self, hpo):
-        query = self.query.filter(name='%s-debuginfo' % hpo.name, arch=hpo.arch)
+        if not hpo.sourcerpm:
+            return []
+
+        query = self.query.filter(sourcerpm=hpo.sourcerpm, name__substr='-debuginfo', arch=hpo.arch)
         query.run()
         assert len(query.result) in (0, 1)
         return query.result

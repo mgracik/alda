@@ -146,7 +146,6 @@ class Accumulator(object):
 
         query = self.query.filter(sourcerpm=hpo.sourcerpm, name__substr='-debuginfo', arch=hpo.arch)
         query.run()
-        assert len(query.result) in (0, 1)
         return query.result
 
     def _get_subpackages(self, hpo):
@@ -221,9 +220,9 @@ class Accumulator(object):
             if self.options.get('debuginfo'):
                 debuginfo = set(self._get_debuginfo(hpo)) - self.data
                 if debuginfo:
-                    debuginfo, = debuginfo  # Extract the only item - this should always be a set of one.
-                    self.data.add(debuginfo)
-                    self.log.debug('added debuginfo %s', debuginfo)
+                    for d in debuginfo:
+                        self.data.add(d)
+                        self.log.debug('added debuginfo %s', d)
 
             # Subpackages.
             if self.options.get('fulltree'):

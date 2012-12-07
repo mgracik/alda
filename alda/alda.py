@@ -154,7 +154,16 @@ class Accumulator(object):
 
         query = self.query.filter(sourcerpm=hpo.sourcerpm)
         query.run()
-        return query.result
+
+        selectors = []
+        for po in (set(query.result) - self.data):
+            if po in self.skiplist:
+                continue
+            select = hawkey.Selector(self.sack)
+            select.set(name=po.name, arch=po.arch)
+            select.request = po
+            selectors.append(select)
+        return selectors
 
     def new_solution_cb(self, goal):
         # Save the new install request.
@@ -226,9 +235,9 @@ class Accumulator(object):
 
             # Subpackages.
             if self.options.get('fulltree'):
-                subpackages = set(self._get_subpackages(hpo)) - self.data
+                subpackages = self._get_subpackages(hpo)
                 if self.options.get('oneatatime'):
-                    for item in (subpackages - self.skiplist):
+                    for item in subpackages:
                         subpackages_goal = Goal(self.sack)
                         subpackages_goal.install(item)
                         subpackages_acc = self.update(self, subpackages_goal)
@@ -237,23 +246,11 @@ class Accumulator(object):
                         for subpackage in sorted(new_subpackages):
                             self.log.debug('added subpackage %s', subpackage)
                         if subpackages_goal.problems:
-                            self.log.error('encountered errors when getting subpackages for %s', item)
+                            self.log.error('encountered errors when getting subpackages for %s', item.request)
                             map(self.log.error, subpackages_goal.problems)
-                            self._problems.add(item)
+                            self._problems.add(item.request)
                 else:
-                    if subpackages and tuple(subpackages) not in self.skiplist:
-                        subpackages_goal = Goal(self.sack)
-                        for item in subpackages:
-                            subpackages_goal.install(item)
-                        subpackages_acc = self.update(self, subpackages_goal)
-                        new_subpackages = subpackages_acc.data - self.data
-                        self.data |= new_subpackages
-                        for subpackage in sorted(new_subpackages):
-                            self.log.debug('added subpackage %s', subpackage)
-                        if subpackages_goal.problems:
-                            self.log.error('encountered errors when getting subpackages for %s', map(str, subpackages))
-                            map(self.log.error, subpackages_goal.problems)
-                            self._problems.add(tuple(subpackages))
+                    raise NotImplementedError
 
     @property
     def active_requests(self):

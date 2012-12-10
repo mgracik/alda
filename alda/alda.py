@@ -245,7 +245,7 @@ class Accumulator(object):
                     for subpackage in sorted(new_subpackages):
                         self.log.debug('added subpackage %s', subpackage)
                     if subpackages_goal.problems:
-                        self.log.error('encountered errors when getting subpackages for %s', item.request)
+                        self.log.error('encountered errors when adding subpackage %s', item.request)
                         map(self.log.error, subpackages_goal.problems)
                         self._problems.add(item.request)
 

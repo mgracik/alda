@@ -236,21 +236,18 @@ class Accumulator(object):
             # Subpackages.
             if self.options.get('fulltree'):
                 subpackages = self._get_subpackages(hpo)
-                if self.options.get('oneatatime'):
-                    for item in subpackages:
-                        subpackages_goal = Goal(self.sack)
-                        subpackages_goal.install(item)
-                        subpackages_acc = self.update(self, subpackages_goal)
-                        new_subpackages = subpackages_acc.data - self.data
-                        self.data |= new_subpackages
-                        for subpackage in sorted(new_subpackages):
-                            self.log.debug('added subpackage %s', subpackage)
-                        if subpackages_goal.problems:
-                            self.log.error('encountered errors when getting subpackages for %s', item.request)
-                            map(self.log.error, subpackages_goal.problems)
-                            self._problems.add(item.request)
-                else:
-                    raise NotImplementedError
+                for item in subpackages:
+                    subpackages_goal = Goal(self.sack)
+                    subpackages_goal.install(item)
+                    subpackages_acc = self.update(self, subpackages_goal)
+                    new_subpackages = subpackages_acc.data - self.data
+                    self.data |= new_subpackages
+                    for subpackage in sorted(new_subpackages):
+                        self.log.debug('added subpackage %s', subpackage)
+                    if subpackages_goal.problems:
+                        self.log.error('encountered errors when getting subpackages for %s', item.request)
+                        map(self.log.error, subpackages_goal.problems)
+                        self._problems.add(item.request)
 
     @property
     def active_requests(self):
@@ -275,8 +272,7 @@ class ALDA(object):
                            source=True,
                            selfhosting=False,
                            debuginfo=True,
-                           fulltree=False,
-                           oneatatime=False)
+                           fulltree=False)
 
     @staticmethod
     def get_repo_metadata(reponame, repopath):

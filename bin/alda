@@ -37,7 +37,6 @@ def parse_args():
     parser.add_argument('--selfhosting', action='store_true', default=False)
     parser.add_argument('--nodebuginfo', action='store_true', default=False)
     parser.add_argument('--fulltree', action='store_true', default=False)
-    parser.add_argument('-1', '--oneatatime', action='store_true', default=False)
     parser.add_argument('-v', '--verbose', action='store_true', default=False)
     return parser.parse_args()
 
@@ -79,8 +78,7 @@ def main():
                    source=not args.nosource,
                    selfhosting=args.selfhosting,
                    debuginfo=not args.nodebuginfo,
-                   fulltree=args.fulltree,
-                   oneatatime=args.oneatatime)
+                   fulltree=args.fulltree)
 
     alda_ = alda.ALDA(repodict, options)
     alda_.load_sack(arch=args.arch)

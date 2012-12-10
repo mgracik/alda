@@ -48,7 +48,6 @@ class TestDefault(ALDATestCase):
         selfhosting=False,
         debuginfo=True,
         fulltree=False,
-        oneatatime=False
 
     '''
 

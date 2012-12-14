@@ -30,7 +30,7 @@ import alda
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('packages', metavar='FILENAME')
-    parser.add_argument('-r', '--repository', metavar='REPOSITORY', action='append', default=[])
+    parser.add_argument('-r', '--repository', metavar='REPOSITORY', action='append', required=True)
     parser.add_argument('--arch', default=None)
     parser.add_argument('--greedy', action='store_true', default=False)
     parser.add_argument('--nosource', action='store_true', default=False)

@@ -297,7 +297,7 @@ class ALDA(object):
         # Set the repository type.
         repo_handle.setopt(librepo.LRO_REPOTYPE, librepo.LR_YUMREPO)
         # Download primary.xml and filelists.xml - repomd.xml is downloaded automatically.
-        repo_handle.setopt(librepo.LRO_YUMREPOFLAGS, librepo.LR_YUM_PRI | librepo.LR_YUM_FIL)
+        repo_handle.setopt(librepo.LRO_YUMDLIST, ['primary', 'filelists'])
 
         repo_handle.perform(repo_result)
         return repo_result.getinfo(librepo.LRR_YUM_REPO), destdir
